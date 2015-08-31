@@ -1,17 +1,20 @@
 package com.ivanbratoev.festpal;
 
 import android.app.Activity;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
+
+import com.ivanbratoev.festpal.datamodel.db.internal.InternalDatabaseHandler;
 
 public class ArtistListActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -29,6 +32,12 @@ public class ArtistListActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!InternalDatabaseHandler.getInstance(getApplicationContext()).hasFestivals()){
+            startActivity(new Intent(this, ManageFests.class));
+            finish();
+        }
+
         setContentView(R.layout.activity_artist_list);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)

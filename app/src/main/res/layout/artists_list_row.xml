@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Artist"
+        android:id="@+id/artist"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/notify"
+        android:layout_toLeftOf="@+id/notify"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="starts in @ stage"
+        android:id="@+id/starts_in_stage"
+        android:layout_below="@+id/artist"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_toStartOf="@+id/notify"
+        android:layout_toLeftOf="@+id/notify"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="day time"
+        android:id="@+id/day_time"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/starts_in_stage" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="duration"
+        android:layout_below="@+id/starts_in_stage"
+        android:layout_toLeftOf="@+id/notify"
+        android:layout_toStartOf="@+id/notify"
+        android:layout_toRightOf="@+id/day_time"
+        android:layout_toEndOf="@+id/day_time"
+        android:gravity="center_horizontal"
+        android:id="@+id/duration" />
+    <ImageView
+        android:id="@+id/notify"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:contentDescription="discrp" />
+</RelativeLayout>

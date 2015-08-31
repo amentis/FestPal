@@ -6,17 +6,15 @@ import java.util.Date;
 public class Concert {
     private Festival festival;
     private String artist;
-    private String genre;
     private int scene;
     private int day;
     private Date start;
     private Date end;
     private boolean notify;
 
-    public Concert(Festival festival, String artist, String genre, int scene, int day, Date start, Date end, boolean notify) {
+    public Concert(Festival festival, String artist, int scene, int day, Date start, Date end, boolean notify) {
         this.festival = festival;
         this.artist = artist;
-        this.genre = genre;
         this.scene = scene;
         this.day = day;
         this.start = start;
@@ -38,14 +36,6 @@ public class Concert {
 
     public void setArtist(String artist) {
         this.artist = artist;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
     }
 
     public int getScene() {

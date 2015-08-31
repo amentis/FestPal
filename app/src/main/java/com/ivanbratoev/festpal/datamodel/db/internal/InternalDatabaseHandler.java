@@ -191,7 +191,6 @@ public class InternalDatabaseHandler {
             result[i] = new Concert(
                     festival,
                     cursor.getString(cursor.getColumnIndex(InternalDBContract.ConcertEntry.COLUMN_NAME_ARTIST)),
-                    cursor.getString(cursor.getColumnIndex(InternalDBContract.ConcertEntry.COLUMN_NAME_GENRE)),
                     cursor.getInt(cursor.getColumnIndex(InternalDBContract.ConcertEntry.COLUMN_NAME_SCENE)),
                     cursor.getInt(cursor.getColumnIndex(InternalDBContract.ConcertEntry.COLUMN_NAME_DAY)),
                     new Date(cursor.getInt(cursor.getColumnIndex(InternalDBContract.ConcertEntry.COLUMN_NAME_START))),
@@ -213,7 +212,6 @@ public class InternalDatabaseHandler {
         ContentValues values = new ContentValues();
         values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_FESTIVAL, concert.getFestival().getId());
         values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_ARTIST, concert.getArtist());
-        values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_GENRE, concert.getGenre());
         values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_SCENE, concert.getScene());
         values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_DAY, concert.getDay());
         values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_START, concert.getStart().getTime());
@@ -224,7 +222,7 @@ public class InternalDatabaseHandler {
     }
 
     public void editConcert(int festivalOld, String artistOld, Integer festival,
-                            String artist, String genre, Integer scene,
+                            String artist, Integer scene,
                             Integer day, Date start, Date end, Boolean notify){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -234,8 +232,6 @@ public class InternalDatabaseHandler {
             values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_FESTIVAL, festival);
         if (artist != null)
             values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_ARTIST, artist);
-        if (genre != null)
-            values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_GENRE, genre);
         if (scene != null)
             values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_SCENE, scene);
         if (day != null)

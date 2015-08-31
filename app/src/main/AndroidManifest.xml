@@ -16,6 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ManageFests"
+            android:label="@string/title_activity_manage_fests" >
+        </activity>
     </application>
 
 </manifest>
