@@ -1,4 +1,4 @@
-package com.ivanbratoev.festpal;
+package com.ivanbratoev.festpal.frontend.currentfest;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,14 +9,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ivanbratoev.festpal.R;
 import com.ivanbratoev.festpal.datamodel.db.internal.InternalDatabaseHandler;
+import com.ivanbratoev.festpal.frontend.NavigationDrawerFragment;
 
-public class ArtistListActivity extends AppCompatActivity
+public class CurrentFestivalConcertsListActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
@@ -34,11 +34,11 @@ public class ArtistListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         if (!InternalDatabaseHandler.getInstance(getApplicationContext()).hasFestivals()){
-            startActivity(new Intent(this, ManageFests.class));
+            startActivity(new Intent(this, com.ivanbratoev.festpal.frontend.festlists.DownloadedFestivalsActivity.class));
             finish();
         }
 
-        setContentView(R.layout.activity_artist_list);
+        setContentView(R.layout.activity_current_festival_concerts_list);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
@@ -80,35 +80,6 @@ public class ArtistListActivity extends AppCompatActivity
         actionBar.setTitle(mTitle);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
-            getMenuInflater().inflate(R.menu.artist_list, menu);
-            restoreActionBar();
-            return true;
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -118,6 +89,9 @@ public class ArtistListActivity extends AppCompatActivity
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+
+        public PlaceholderFragment() {
+        }
 
         /**
          * Returns a new instance of this fragment for the given section
@@ -131,20 +105,17 @@ public class ArtistListActivity extends AppCompatActivity
             return fragment;
         }
 
-        public PlaceholderFragment() {
-        }
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_bands_list, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_concerts_list, container, false);
             return rootView;
         }
 
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((ArtistListActivity) activity).onSectionAttached(
+            ((com.ivanbratoev.festpal.frontend.currentfest.CurrentFestivalConcertsListActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }

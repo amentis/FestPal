@@ -17,6 +17,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    android {
+        sourceSets {
+            instrumentTest.setRoot('tests')
+            instrumentTest.java.srcDirs = ['tests/src']
+        }
+    }
 }
 
 dependencies {
