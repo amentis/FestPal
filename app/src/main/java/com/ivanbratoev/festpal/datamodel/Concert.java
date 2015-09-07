@@ -3,6 +3,9 @@ package com.ivanbratoev.festpal.datamodel;
 
 import java.util.Date;
 
+/**
+ * Concert information holder class
+ */
 public class Concert {
     private Festival festival;
     private String artist;
@@ -70,7 +73,7 @@ public class Concert {
         this.end = end;
     }
 
-    public boolean isNotify() {
+    public boolean willNotify() {
         return notify;
     }
 

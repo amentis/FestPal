@@ -1,4 +1,4 @@
-package com.ivanbratoev.festpal.frontend.currentfest;
+package com.ivanbratoev.festpal.frontend.currentfestival;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,8 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ivanbratoev.festpal.R;
-import com.ivanbratoev.festpal.datamodel.db.internal.InternalDatabaseHandler;
+import com.ivanbratoev.festpal.datamodel.DataModel;
 import com.ivanbratoev.festpal.frontend.NavigationDrawerFragment;
+import com.ivanbratoev.festpal.frontend.festivallists.DownloadedFestivalsActivity;
 
 public class CurrentFestivalConcertsListActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -33,8 +34,8 @@ public class CurrentFestivalConcertsListActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!InternalDatabaseHandler.getInstance(getApplicationContext()).hasFestivals()){
-            startActivity(new Intent(this, com.ivanbratoev.festpal.frontend.festlists.DownloadedFestivalsActivity.class));
+        if (!DataModel.getInstance().internalDatabaseHasFestivals()) {
+            startActivity(new Intent(this, DownloadedFestivalsActivity.class));
             finish();
         }
 
@@ -115,7 +116,7 @@ public class CurrentFestivalConcertsListActivity extends AppCompatActivity
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((com.ivanbratoev.festpal.frontend.currentfest.CurrentFestivalConcertsListActivity) activity).onSectionAttached(
+            ((CurrentFestivalConcertsListActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }

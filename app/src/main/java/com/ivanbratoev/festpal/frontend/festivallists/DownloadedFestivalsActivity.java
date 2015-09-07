@@ -1,4 +1,4 @@
-package com.ivanbratoev.festpal.frontend.festlists;
+package com.ivanbratoev.festpal.frontend.festivallists;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

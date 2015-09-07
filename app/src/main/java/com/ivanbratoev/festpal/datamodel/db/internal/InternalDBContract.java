@@ -3,6 +3,9 @@ package com.ivanbratoev.festpal.datamodel.db.internal;
 
 import android.provider.BaseColumns;
 
+/**
+ * Class used as a contract for the internal DB
+ */
 public class InternalDBContract {
     public static final String CREATE_TABLE_CONCERT_QUERY =
             "CREATE TABLE " + ConcertEntry.TABLE_NAME + " ("
@@ -34,6 +37,9 @@ public class InternalDBContract {
     public InternalDBContract() {
     }
 
+    /**
+     * Concert table definition
+     */
     public static abstract class ConcertEntry implements BaseColumns {
         public static final String TABLE_NAME = "concert";
         public static final String COLUMN_NAME_FESTIVAL = "festival";
@@ -45,6 +51,9 @@ public class InternalDBContract {
         public static final String COLUMN_NAME_NOTIFY = "notify";
     }
 
+    /**
+     * Festival table definition
+     */
     public static abstract class FestivalEntry implements BaseColumns {
         public static final String TABLE_NAME = "festival";
         public static final String COLUMN_NAME_NAME = "name";

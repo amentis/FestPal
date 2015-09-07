@@ -1,6 +1,9 @@
 package com.ivanbratoev.festpal.datamodel;
 
 
+/**
+ * Holder class for festival info
+ */
 public class Festival {
     private int id;
     private String name;
@@ -13,6 +16,7 @@ public class Festival {
     private String uploader;
     private boolean official;
     private int rank;
+
 
     public Festival(int id, String name, String description, String country, String city, String address,
                     String genre, String prices, String uploader, boolean official, int rank) {

@@ -12,29 +12,18 @@ import com.ivanbratoev.festpal.datamodel.Festival;
 import java.util.Date;
 
 /**
- * Helper singleton for accessing the internal database
+ * Helper class for accessing the internal database
  */
 public class InternalDatabaseHandler {
 
-    private static InternalDatabaseHandler instance;
-
     private InternalDBHelper dbHelper;
-
-    protected InternalDatabaseHandler() {
-
-    }
 
     /**
      *
-     * @param context context. Must not be null upon instantiation of the singleton
-     * @return singleton instance
+     * @param context application contexts
      */
-    public static InternalDatabaseHandler getInstance(Context context){
-        if (instance == null){
-            instance = new InternalDatabaseHandler();
-            instance.dbHelper = new InternalDBHelper(context);
-        }
-        return instance;
+    public InternalDatabaseHandler(Context context) {
+        dbHelper = new InternalDBHelper(context);
     }
 
     /**
@@ -60,7 +49,7 @@ public class InternalDatabaseHandler {
      * @param festival festival to check for
      * @return true if there are concerts recorded for the input festival, false otherwise
      */
-    public boolean hasConcerts(Festival festival){
+    public boolean festivalHasConcerts(Festival festival) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         Cursor cursor = db.query(InternalDBContract.FestivalEntry.TABLE_NAME,
@@ -76,6 +65,9 @@ public class InternalDatabaseHandler {
         return result;
     }
 
+    /**
+     * @return an array of all festivals in the internal db
+     */
     public Festival[] getFestivals(){
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -111,6 +103,11 @@ public class InternalDatabaseHandler {
         return result;
     }
 
+    /**
+     * Add a festival to the internal DB
+     * @param festival the festival information to insert
+     * @return the result from the database insert operation
+     */
     public long addFestival(Festival festival){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -129,6 +126,20 @@ public class InternalDatabaseHandler {
         return db.insert(InternalDBContract.FestivalEntry.TABLE_NAME, null, values);
     }
 
+    /**
+     * alter the values of the record of a festival in the internal database
+     * @param id id used to find the record
+     * @param name new name to set or <code>null</code> to keep the field unmodified
+     * @param description new description to set or <code>null</code> to keep the field unmodified
+     * @param country new country to set or <code>null</code> to keep the field unmodified
+     * @param city new city to set or <code>null</code> to keep the field unmodified
+     * @param address new address to set or <code>null</code> to keep the field unmodified
+     * @param genre new genre to set or <code>null</code> to keep the field unmodified
+     * @param prices new prices to set or <code>null</code> to keep the field unmodified
+     * @param uploader new uploader to set or <code>null</code> to keep the field unmodified
+     * @param official new official to set or <code>null</code> to keep the field unmodified
+     * @param rank new rank to set or <code>null</code> to keep the field unmodified
+     */
     public void editFestival(int id, String name, String description, String country,
                              String city, String address, String genre, String prices,
                              String uploader, Boolean official, Integer rank){
@@ -163,6 +174,10 @@ public class InternalDatabaseHandler {
                 new String[]{String.valueOf(id)});
     }
 
+    /**
+     * remove festival
+     * @param id id of the festival to remove
+     */
     public void removeFestival(int id){
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -172,6 +187,11 @@ public class InternalDatabaseHandler {
                 new String[]{String.valueOf(id)});
     }
 
+    /**
+     *
+     * @param festival festival in which the concerts are to be listed
+     * @return all concerts in the festival
+     */
     public Concert[] getConcerts(Festival festival){
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -206,6 +226,11 @@ public class InternalDatabaseHandler {
         return result;
     }
 
+    /**
+     * add concert to the internal DB
+     * @param concert concert info to insert
+     * @return result from DB insert
+     */
     public long addConcert(Concert concert){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -216,11 +241,23 @@ public class InternalDatabaseHandler {
         values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_DAY, concert.getDay());
         values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_START, concert.getStart().getTime());
         values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_END, concert.getEnd().getTime());
-        values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_NOTIFY, concert.isNotify());
+        values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_NOTIFY, concert.willNotify());
 
         return db.insert(InternalDBContract.ConcertEntry.TABLE_NAME, null, values);
     }
 
+    /**
+     * Alter the information of a concert entry
+     * @param festivalOld current festival id, used for identifying the concert
+     * @param artistOld current artist name, used for identifying the concert
+     * @param festival new festival id to set or <code>null</code> to leave unmodified
+     * @param artist new artist name to set or <code>null</code> to leave unmodified
+     * @param scene new scene number to set or <code>null</code> to leave unmodified
+     * @param day new day number to set or <code>null</code> to leave unmodified
+     * @param start new starting datetime to set or <code>null</code> to leave unmodified
+     * @param end new ending datetime to set or <code>null</code> to leave unmodified
+     * @param notify new notify value to set or <code>null</code> to leave unmodified
+     */
     public void editConcert(int festivalOld, String artistOld, Integer festival,
                             String artist, Integer scene,
                             Integer day, Date start, Date end, Boolean notify){
@@ -250,6 +287,12 @@ public class InternalDatabaseHandler {
                 new String[]{String.valueOf(festivalOld), artistOld});
 
     }
+
+    /**
+     * remove concert from internal database
+     * @param festival festival id of the festival the concert is part of
+     * @param artist artist name
+     */
     public void removeConcert(int festival, String artist){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(InternalDBContract.ConcertEntry.TABLE_NAME,
