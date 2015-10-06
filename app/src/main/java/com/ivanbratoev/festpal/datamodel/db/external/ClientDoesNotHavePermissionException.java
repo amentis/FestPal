@@ -14,19 +14,10 @@
  *    limitations under the License.
  */
 
-package com.ivanbratoev.festpal.frontend.festivallists;
+package com.ivanbratoev.festpal.datamodel.db.external;
 
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-
-import com.ivanbratoev.festpal.R;
-
-//TODO:implement
-public class DownloadedFestivalsActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_downloaded_festivals);
+public class ClientDoesNotHavePermissionException extends Exception {
+    public ClientDoesNotHavePermissionException(String message) {
+        super(message);
     }
 }

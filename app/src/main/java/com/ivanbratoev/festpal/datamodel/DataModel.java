@@ -1,11 +1,36 @@
+/*
+ * Copyright 2015 Ivan Bratoev
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
 package com.ivanbratoev.festpal.datamodel;
 
+
+import android.content.Context;
+import android.support.annotation.NonNull;
+
+import com.ivanbratoev.festpal.datamodel.db.external.ExternalDatabaseHandler;
+import com.ivanbratoev.festpal.datamodel.db.internal.InternalDatabaseHandler;
 
 /**
  * Singleton used to organise the model of the application, providing high-level interface
  */
 public final class DataModel {
+
     private static DataModel instance;
+    private InternalDatabaseHandler internalDatabaseHandler;
+    private ExternalDatabaseHandler externalDatabaseHandler;
 
     /**
      * empty private constructor to forbid instantiation
@@ -14,11 +39,26 @@ public final class DataModel {
 
     }
 
-    public static DataModel getInstance(){
+    /**
+     * get reference to the DataModel Object. It is important, that init() is called after creation
+     * of the singleton
+     *
+     * @return reference to the singleton
+     */
+    public static synchronized DataModel getInstance() {
         if (instance == null){
             instance = new DataModel();
         }
         return instance;
+    }
+
+    /**
+     * @param context    application context
+     * @param clientName client name used for authentication with external DB
+     */
+    public void init(@NonNull Context context, @NonNull String clientName) {
+        internalDatabaseHandler = new InternalDatabaseHandler(context);
+        externalDatabaseHandler = new ExternalDatabaseHandler(clientName);
     }
 
     /**
@@ -28,7 +68,7 @@ public final class DataModel {
      * @return festivals from the online database
      */
     public Festival[] getOnlineFestivals(int numberOfResults) {
-        //TODO
+        //TODO:implement
         return null;
     }
 
@@ -43,13 +83,13 @@ public final class DataModel {
      * @param MaxPrice        maximum price to filter the results by, <code>null</code> to ignore
      * @param artist          artist to filter the results by, <code>null</code> to ignore
      * @param official        official to filter the results by, <code>null</code> to ignore
-     * @param rank            rank to filter the results by, <code>null</code> to ignore
+     * @param votes          number of votes to filter the results by, <code>null</code> to ignore
      * @return resulting festivals
      */
     public Festival[] getOnlineFestivals(int numberOfResults, String country, String city,
                                          String genre, Float minPrice, Float MaxPrice,
-                                         String artist, Boolean official, Integer rank) {
-        //TODO
+                                         String artist, Boolean official, Integer votes) {
+        //TODO:implement
         return null;
     }
 
@@ -59,7 +99,7 @@ public final class DataModel {
      * @return all festivals in the offline database
      */
     public Festival[] getOfflineFestivals() {
-        //TODO
+        //TODO:implement
         return null;
     }
 
@@ -72,7 +112,7 @@ public final class DataModel {
      * @return festival object containing the data
      */
     public Festival readFestivalInfo(int id, boolean update) {
-        //TODO
+        //TODO:implement
         return null;
     }
 
@@ -84,7 +124,7 @@ public final class DataModel {
      * old one has been edited instead
      */
     public boolean writeFestivalInfo(Festival festival, boolean online) {
-        //TODO
+        //TODO:implement
         return false;
     }
 
@@ -97,8 +137,8 @@ public final class DataModel {
      *                   returning data if set <code>true</code>
      * @return concert object containing the data
      */
-    public Concert readConcertInfo(int festivalId, String artist, boolean update) {
-        //TODO
+    public Concert readConcertInfo(int festivalId, @NonNull String artist, boolean update) {
+        //TODO:implement
         return null;
     }
 
@@ -109,8 +149,8 @@ public final class DataModel {
      * @return <code>true</code> if the written entry is new, <code>false</code> if an
      * old one has been edited instead
      */
-    public boolean writeConcertInfo(Concert concert, boolean online) {
-        //TODO
+    public boolean writeConcertInfo(@NonNull Concert concert, boolean online) {
+        //TODO:implement
         return false;
     }
 
@@ -121,7 +161,7 @@ public final class DataModel {
      * @return <code>true</code> on success, <code>false</code> otherwise
      */
     public boolean synchronise(boolean writeToOnline) {
-        //TODO
+        //TODO:implement
         return false;
     }
 
@@ -130,7 +170,7 @@ public final class DataModel {
      * there is problem connecting to the external database, 2 if there is no Internet Connection
      */
     public int externalDatabaseConnectivityStatus() {
-        //TODO
+        //TODO:implement
         return 2;
     }
 
@@ -138,7 +178,7 @@ public final class DataModel {
      * @return true if festivals are recorded in the internal database, false otherwise
      */
     public boolean internalDatabaseHasFestivals() {
-        //TODO
+        //TODO:implement
         return false;
     }
 
@@ -148,8 +188,8 @@ public final class DataModel {
      * @return true if there are concerts recorded for the input festival in the internal database,
      * false otherwise
      */
-    public boolean internalDatabaseFestivalHasConcerts(Festival festival){
-        //TODO
+    public boolean internalDatabaseFestivalHasConcerts(@NonNull Festival festival) {
+        //TODO:implement
         return false;
     }
 }
