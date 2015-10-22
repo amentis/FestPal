@@ -26,6 +26,7 @@ public class InternalDBContract {
     public static final String CREATE_TABLE_CONCERT_QUERY =
             "CREATE TABLE " + ConcertEntry.TABLE_NAME + " ("
             + ConcertEntry._ID + " INTEGER PRIMARY KEY, "
+                    + ConcertEntry.COLUMN_NAME_EXTERNAL_ID + " INTEGER, "
             + ConcertEntry.COLUMN_NAME_FESTIVAL + " INTEGER, "
             + ConcertEntry.COLUMN_NAME_ARTIST + " TEXT, "
                     + ConcertEntry.COLUMN_NAME_STAGE + " INTEGER, "
@@ -33,8 +34,6 @@ public class InternalDBContract {
             + ConcertEntry.COLUMN_NAME_START + " INTEGER, "
             + ConcertEntry.COLUMN_NAME_END + " INTEGER, "
             + ConcertEntry.COLUMN_NAME_NOTIFY + " INTEGER, "
-                    + ConcertEntry.COLUMN_NAME_LAST_MODIFIED + " INTEGER, "
-                    + ConcertEntry.COLUMN_NAME_LAST_SYNCHRONISED + " INTEGER, "
             + "FOREIGN KEY(" + ConcertEntry.COLUMN_NAME_FESTIVAL + ") REFERENCES " + FestivalEntry.TABLE_NAME + "(" + FestivalEntry._ID + ") "
             + ")";
     public static final String CREATE_TABLE_FESTIVAL_QUERY =
@@ -48,11 +47,9 @@ public class InternalDBContract {
             + FestivalEntry.COLUMN_NAME_ADDRESS + " TEXT, "
             + FestivalEntry.COLUMN_NAME_GENRE + " TEXT, "
             + FestivalEntry.COLUMN_NAME_PRICES + " TEXT, "
-            + FestivalEntry.COLUMN_NAME_UPLOADER + " TEXT, "
+                    + FestivalEntry.COLUMN_NAME_OWNER + " TEXT, "
             + FestivalEntry.COLUMN_NAME_OFFICIAL + " INTEGER, "
                     + FestivalEntry.COLUMN_NAME_VOTES + " VOTES, "
-                    + FestivalEntry.COLUMN_NAME_LAST_MODIFIED + " INTEGER, "
-                    + FestivalEntry.COLUMN_NAME_LAST_SYNCHRONISED + " INTEGER "
             + ")";
 
     public InternalDBContract() {
@@ -63,6 +60,7 @@ public class InternalDBContract {
      */
     public static abstract class ConcertEntry implements BaseColumns {
         public static final String TABLE_NAME = "concert";
+        public static final String COLUMN_NAME_EXTERNAL_ID = "externalId";
         public static final String COLUMN_NAME_FESTIVAL = "festival";
         public static final String COLUMN_NAME_ARTIST = "artist";
         public static final String COLUMN_NAME_STAGE = "stage";
@@ -70,8 +68,6 @@ public class InternalDBContract {
         public static final String COLUMN_NAME_START = "start";
         public static final String COLUMN_NAME_END = "end";
         public static final String COLUMN_NAME_NOTIFY = "notify";
-        public static final String COLUMN_NAME_LAST_MODIFIED = "lastModified";
-        public static final String COLUMN_NAME_LAST_SYNCHRONISED = "lastSynchronised";
     }
 
     /**
@@ -87,10 +83,8 @@ public class InternalDBContract {
         public static final String COLUMN_NAME_ADDRESS = "address";
         public static final String COLUMN_NAME_GENRE = "genre";
         public static final String COLUMN_NAME_PRICES = "prices";
-        public static final String COLUMN_NAME_UPLOADER = "uploader";
+        public static final String COLUMN_NAME_OWNER = "owner";
         public static final String COLUMN_NAME_OFFICIAL = "official";
         public static final String COLUMN_NAME_VOTES = "votes";
-        public static final String COLUMN_NAME_LAST_MODIFIED = "lastModified";
-        public static final String COLUMN_NAME_LAST_SYNCHRONISED = "lastSynchronised";
     }
 }

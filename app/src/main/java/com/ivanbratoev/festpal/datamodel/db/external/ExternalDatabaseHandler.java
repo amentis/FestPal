@@ -129,24 +129,73 @@ public class ExternalDatabaseHandler {
      * @param num number of festivals to return
      * @return num number festivals or less if not enough festivals are found. Null on incorrect
      * input or error
+     * Override method
      * @throws ClientDoesNotHavePermissionException
      */
     public Festival[] readMultipleFestivals(int num) throws ClientDoesNotHavePermissionException {
+        return readMultipleFestivals(num, null, null, null, null, null, null, null, null);
+    }
+
+    /**
+     * return top festival results matching the search criteria. If the
+     * number of found festival is lesser than the requested number of festivals all found
+     * festivals are returned
+     *
+     * @param num      number of festivals to return
+     * @param official official to filter the results by, <code>null</code> to ignore
+     * @param name     name to filter the results by, <code>null</code> to ignore
+     * @param country  country to filter the results by, <code>null</code> to ignore
+     * @param city     city to filter the results by, <code>null</code> to ignore
+     * @param genre    genre to filter the results by, <code>null</code> to ignore
+     * @param minPrice minimum price to filter the results by, <code>null</code> to ignore
+     * @param maxPrice maximum price to filter the results by, <code>null</code> to ignore
+     * @param artist   artist performing in a concert hosted by the festival
+     *                 to filter the results by, <code>null</code> to ignore
+     * @return resulting festivals
+     */
+    public Festival[] readMultipleFestivals(int num, Boolean official, String name, String country,
+                                            String city, String genre,
+                                            String minPrice, String maxPrice, String artist)
+            throws ClientDoesNotHavePermissionException {
         try {
-            if (num <= 0) {
-                return null;
-            }
             URL url = new URL(ExternalDatabaseHelper.getReadMultipleFestivals());
             Map<String, String> parameters = new HashMap<>();
-            parameters.put(ExternalDatabaseDefinitions.PARAMETER_NUMBER, String.valueOf(num));
+            parameters.put(ExternalDatabaseDefinitions.PARAMETER_NUMBER,
+                    String.valueOf(num));
+            if (official != null)
+                parameters.put(
+                        ExternalDatabaseDefinitions.FestivalsContext.RESULT_PARAMETER_OFFICIAL,
+                        String.valueOf(official));
+            if (name != null)
+                parameters.put(ExternalDatabaseDefinitions.FestivalsContext.RESULT_PARAMETER_NAME,
+                        name);
+            if (country != null)
+                parameters.put(
+                        ExternalDatabaseDefinitions.FestivalsContext.RESULT_PARAMETER_COUNTRY,
+                        country);
+            if (city != null)
+                parameters.put(ExternalDatabaseDefinitions.FestivalsContext.RESULT_PARAMETER_CITY,
+                        city);
+            if (genre != null)
+                parameters.put(ExternalDatabaseDefinitions.FestivalsContext.RESULT_PARAMETER_GENRE,
+                        genre);
+            if (minPrice != null)
+                parameters.put(ExternalDatabaseDefinitions.PARAMETER_MIN_PRICE,
+                        minPrice);
+            if (maxPrice != null)
+                parameters.put(ExternalDatabaseDefinitions.PARAMETER_MAX_PRICE,
+                        maxPrice);
+            if (artist != null)
+                parameters.put(ExternalDatabaseDefinitions.ConcertContext.RESULT_PARAMETER_ARTIST,
+                        artist);
             String response = getRemoteData(url, parameters);
             JSONArray json = new JSONArray(response);
             Festival[] result = new Festival[json.length()];
             for (int i = 0; i < json.length(); i++) {
                 JSONObject current = json.getJSONObject(i);
                 result[i] = new Festival(
-                        -1,
-                        current.getInt(
+                        -1L,
+                        current.getLong(
                                 ExternalDatabaseDefinitions.FestivalsContext.
                                         RESULT_PARAMETER_ID),
                         current.getString(
@@ -182,7 +231,7 @@ public class ExternalDatabaseHandler {
                 );
             }
             return result;
-        } catch (MalformedURLException | JSONException ignore) {
+        } catch (JSONException | MalformedURLException ignore) {
             return null;
         }
     }
@@ -209,6 +258,9 @@ public class ExternalDatabaseHandler {
             for (int i = 0; i < json.length(); i++) {
                 JSONObject current = json.getJSONObject(i);
                 result[i] = new Concert(
+                        null,
+                        current.getLong(ExternalDatabaseDefinitions.ConcertContext.
+                                RESULT_PARAMETER_EXTERNAL_ID),
                         festival,
                         current.getString(ExternalDatabaseDefinitions.ConcertContext.
                                 RESULT_PARAMETER_ARTIST),
@@ -236,7 +288,7 @@ public class ExternalDatabaseHandler {
      * @return festival object or null
      * @throws ClientDoesNotHavePermissionException
      */
-    public Festival readFestivalInfo(int festivalID) throws ClientDoesNotHavePermissionException {
+    public Festival readFestivalInfo(long festivalID) throws ClientDoesNotHavePermissionException {
         if (festivalID < 0)
             return null;
         try {
@@ -250,8 +302,8 @@ public class ExternalDatabaseHandler {
                 return null;
             JSONObject json = new JSONObject(response);
             return new Festival(
-                    -1,
-                    json.getInt(ExternalDatabaseDefinitions.FestivalsContext.
+                    -1L,
+                    json.getLong(ExternalDatabaseDefinitions.FestivalsContext.
                             RESULT_PARAMETER_ID),
                     json.getString(ExternalDatabaseDefinitions.FestivalsContext.
                             RESULT_PARAMETER_NAME),
@@ -351,7 +403,7 @@ public class ExternalDatabaseHandler {
      * @return true on success false otherwise
      * @throws ClientDoesNotHavePermissionException
      */
-    public boolean updateFestivalInfo(int externalID, String name, String description,
+    public boolean updateFestivalInfo(long externalID, String name, String description,
                                       String country, String city, String address,
                                       String genre, String prices, Boolean official)
             throws ClientDoesNotHavePermissionException {
@@ -399,19 +451,19 @@ public class ExternalDatabaseHandler {
 
     /**
      * @param festival festival hosting the concert
-     * @param artist   name of the concert's performing artist
+     * @param id   external database id of the concert item
      * @return concert object or null
      * @throws ClientDoesNotHavePermissionException
      */
-    public Concert readConcertInfo(@NonNull Festival festival, @NonNull String artist)
+    public Concert readConcertInfo(@NonNull Festival festival, long id)
             throws ClientDoesNotHavePermissionException {
         try {
             URL url = new URL(ExternalDatabaseHelper.getReadConcertInfo());
             Map<String, String> parameters = new HashMap<>();
             parameters.put(ExternalDatabaseDefinitions.PARAMETER_FESTIVAL,
                     String.valueOf(festival.getExternalId()));
-            parameters.put(ExternalDatabaseDefinitions.ConcertContext.RESULT_PARAMETER_ARTIST,
-                    artist);
+            parameters.put(ExternalDatabaseDefinitions.ConcertContext.PARAMETER_ID,
+                    String.valueOf(id));
             String response = getRemoteData(url, parameters);
             if (response == null)
                 return null;
@@ -419,6 +471,8 @@ public class ExternalDatabaseHandler {
                 return null;
             JSONObject json = new JSONObject(response);
             return new Concert(
+                    null,
+                    id,
                     festival,
                     json.getString(
                             ExternalDatabaseDefinitions.ConcertContext.RESULT_PARAMETER_ARTIST),
@@ -447,7 +501,7 @@ public class ExternalDatabaseHandler {
      * @return true on success false otherwise
      * @throws ClientDoesNotHavePermissionException
      */
-    public boolean writeConcertInfo(int festivalExternalID, @NonNull String artist, Integer stage,
+    public boolean writeConcertInfo(long festivalExternalID, @NonNull String artist, Integer stage,
                                     Integer day, @NonNull Date start, @NonNull Date end)
             throws ClientDoesNotHavePermissionException {
         try {
@@ -475,8 +529,7 @@ public class ExternalDatabaseHandler {
     }
 
     /**
-     * @param festivalExternalID external id of the festival hosting the concert
-     * @param oldArtist          current artist name to find the concert with
+     * @param id id of the concert item
      * @param artist             new artist name or null to remain unchanged
      * @param stage              new stage or null to remain unchanged
      * @param day                new day or null to remain unchanged
@@ -485,17 +538,15 @@ public class ExternalDatabaseHandler {
      * @return true on success false otherwise
      * @throws ClientDoesNotHavePermissionException
      */
-    public boolean updateConcertInfo(int festivalExternalID, @NonNull String oldArtist,
+    public boolean updateConcertInfo(long id,
                                      String artist, Integer stage, Integer day,
                                      Date start, Date end)
             throws ClientDoesNotHavePermissionException {
         try {
             URL url = new URL(ExternalDatabaseHelper.getUpdateConcertInfo());
             Map<String, String> parameters = new HashMap<>();
-            parameters.put(ExternalDatabaseDefinitions.ConcertContext.PARAMETER_FESTIVAL,
-                    String.valueOf(festivalExternalID));
-            parameters.put(ExternalDatabaseDefinitions.ConcertContext.PARAMETER_OLD_ARTIST,
-                    oldArtist);
+            parameters.put(ExternalDatabaseDefinitions.ConcertContext.PARAMETER_ID,
+                    String.valueOf(id));
             if (artist != null)
                 parameters.put(ExternalDatabaseDefinitions.ConcertContext.PARAMETER_ARTIST,
                         artist);
@@ -548,20 +599,17 @@ public class ExternalDatabaseHandler {
     }
 
     /**
-     * @param festivalExternalID external id of the festival hosting the concert
-     * @param artist             artist name
+     * @param id id of the concert
      * @return true on success false otherwise
      * @throws ClientDoesNotHavePermissionException
      */
-    public boolean deleteConcert(int festivalExternalID, @NonNull String artist)
+    public boolean deleteConcert(long id)
             throws ClientDoesNotHavePermissionException {
         try {
             URL url = new URL(ExternalDatabaseHelper.getDeleteConcertInfo());
             Map<String, String> parameters = new HashMap<>();
-            parameters.put(ExternalDatabaseDefinitions.ConcertContext.PARAMETER_FESTIVAL,
-                    String.valueOf(festivalExternalID));
-            parameters.put(ExternalDatabaseDefinitions.ConcertContext.PARAMETER_ARTIST,
-                    artist);
+            parameters.put(ExternalDatabaseDefinitions.ConcertContext.PARAMETER_ID,
+                    String.valueOf(id));
             String response = getRemoteData(url, parameters);
             return ExternalDatabaseDefinitions.RESPONSE_OK.equals(response);
         } catch (MalformedURLException ignore) {

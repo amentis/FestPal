@@ -18,6 +18,7 @@ package com.ivanbratoev.festpal.datamodel;
 
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.Date;
 
@@ -25,6 +26,9 @@ import java.util.Date;
  * Concert information holder class
  */
 public class Concert {
+
+    private Long id;
+    private Long externalId;
     private Festival festival;
     private String artist;
     private int stage;
@@ -32,8 +36,6 @@ public class Concert {
     private Date start;
     private Date end;
     private boolean notify;
-    private Date lastModified;
-    private Date lastSynchronised;
 
     /**
      * @param festival festival hosting the concert
@@ -44,8 +46,11 @@ public class Concert {
      * @param end      time the fest ends
      * @param notify   whether the user is to be notified that this concert is about to start
      */
-    public Concert(@NonNull Festival festival, @NonNull String artist, int stage, int day,
+    public Concert(@Nullable Long id, long externalId, @NonNull Festival festival,
+                   @NonNull String artist, int stage, int day,
                    @NonNull Date start, @NonNull Date end, boolean notify) {
+        this.id = id;
+        this.externalId = externalId;
         this.festival = festival;
         this.artist = artist;
         this.stage = stage;
@@ -53,33 +58,18 @@ public class Concert {
         this.start = start;
         this.end = end;
         this.notify = notify;
-        this.lastModified = new Date();
-        this.lastSynchronised = new Date();
     }
 
-    /**
-     * @param festival         festival hosting the concert
-     * @param artist           concert's performing artist name
-     * @param stage            stage number, relevant to the festival, where the concert is being held
-     * @param day              day number, relevant to the festival, when the concert is being held
-     * @param start            time the fest starts
-     * @param end              time the fest ends
-     * @param notify           whether the user is to be notified that this concert is about to start
-     * @param lastModified     date/time the object was last modified internally
-     * @param lastSynchronised date/time the object was last synchronised with dbs
-     */
-    public Concert(@NonNull Festival festival, @NonNull String artist, int stage, int day,
-                   @NonNull Date start, @NonNull Date end, boolean notify,
-                   @NonNull Date lastModified, @NonNull Date lastSynchronised) {
-        this.festival = festival;
-        this.artist = artist;
-        this.stage = stage;
-        this.day = day;
-        this.start = start;
-        this.end = end;
-        this.notify = notify;
-        this.lastModified = lastModified;
-        this.lastSynchronised = lastSynchronised;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getExternalId() {
+        return externalId;
     }
 
     public Festival getFestival() {
@@ -87,10 +77,7 @@ public class Concert {
     }
 
     public void setFestival(Festival festival) {
-        if (!festival.equals(this.festival)){
-            this.festival = festival;
-            setModified();
-        }
+        this.festival = festival;
     }
 
     public String getArtist() {
@@ -98,10 +85,7 @@ public class Concert {
     }
 
     public void setArtist(String artist) {
-        if (!artist.equals(this.artist)) {
-            this.artist = artist;
-            setModified();
-        }
+        this.artist = artist;
     }
 
     public int getStage() {
@@ -109,10 +93,7 @@ public class Concert {
     }
 
     public void setStage(int stage) {
-        if (stage != this.stage){
-            this.stage = stage;
-            setModified();
-        }
+        this.stage = stage;
     }
 
     public int getDay() {
@@ -120,10 +101,7 @@ public class Concert {
     }
 
     public void setDay(int day) {
-        if (day != this.day){
-            this.day = day;
-            setModified();
-        }
+        this.day = day;
     }
 
     public Date getStart() {
@@ -131,10 +109,7 @@ public class Concert {
     }
 
     public void setStart(Date start) {
-        if (!start.equals(this.start)){
-            this.start = start;
-            setModified();
-        }
+        this.start = start;
     }
 
     public Date getEnd() {
@@ -142,69 +117,42 @@ public class Concert {
     }
 
     public void setEnd(Date end) {
-        if (!end.equals(this.end)){
-            this.end = end;
-            setModified();
-        }
+        this.end = end;
     }
 
-    public boolean willNotify() {
+    public boolean isToNotify() {
         return notify;
     }
 
     public void setNotify(boolean notify) {
-        if (notify != this.notify) {
-            this.notify = notify;
-            setModified();
-        }
+        this.notify = notify;
     }
 
-    public Date getLastModified() {
-        return lastModified;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Concert concert = (Concert) o;
+
+        if (stage != concert.stage) return false;
+        if (day != concert.day) return false;
+        if (!festival.equals(concert.festival)) return false;
+        if (!artist.equals(concert.artist)) return false;
+        if (!start.equals(concert.start)) return false;
+        return end.equals(concert.end);
+
     }
 
-    public Date getLastSynchronised() {
-        return lastSynchronised;
+    @Override
+    public int hashCode() {
+        int result = festival.hashCode();
+        result = 31 * result + artist.hashCode();
+        result = 31 * result + stage;
+        result = 31 * result + day;
+        result = 31 * result + start.hashCode();
+        result = 31 * result + end.hashCode();
+        return result;
     }
 
-    /**
-     * Sets current time to date modified.
-     */
-    private void setModified() {
-        lastModified = new Date();
-    }
-
-    /**
-     * sets internal data to the supplied one and sets last synchronisation time accordingly
-     *
-     * @param concert the data to write
-     */
-    public void writeToSynchronise(Concert concert) {
-        this.festival = concert.festival;
-        this.artist = concert.artist;
-        this.stage = concert.stage;
-        this.day = concert.day;
-        this.start = concert.start;
-        this.end = concert.end;
-        this.notify = concert.notify;
-        lastSynchronised = new Date();
-    }
-
-    /**
-     * returns unsaved concert data and sets last synchronisation time accordingly
-     *
-     * @return reference to the object if the festival hosting the concert is uploaded by the
-     * logged user and there are modifications done more recently than the object has been last
-     * synchronised, null otherwise
-     */
-    public Concert readToSynchronise(String username) {
-        Date lastSynchronisedBefore = lastSynchronised;
-        lastSynchronised = new Date();
-        if (!this.festival.getOwner().equals(username))
-            return null;
-        if (lastModified.before(lastSynchronisedBefore)){
-            return null;
-        }
-        return this;
-    }
 }

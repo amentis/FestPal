@@ -18,9 +18,9 @@
 
 package com.ivanbratoev.festpal.datamodel.db.external;
 
-import junit.framework.TestCase;
+import android.test.AndroidTestCase;
 
-public class ExternalDatabaseHandlerTest extends TestCase {
+public class ExternalDatabaseHandlerTest extends AndroidTestCase {
 
     public void setUp() throws Exception {
         super.setUp();
@@ -29,61 +29,5 @@ public class ExternalDatabaseHandlerTest extends TestCase {
 
     public void tearDown() throws Exception {
 
-    }
-
-    public void testCanConnectToDB() throws Exception {
-        //TODO: implement
-    }
-
-    public void testLogin() throws Exception {
-        //TODO: implement
-    }
-
-    public void testLogout() throws Exception {
-        //TODO: implement
-    }
-
-    public void testReadMultipleFestivals() throws Exception {
-        //TODO: implement
-    }
-
-    public void testReadFestivalConcerts() throws Exception {
-        //TODO: implement
-    }
-
-    public void testReadFestivalInfo() throws Exception {
-        //TODO: implement
-    }
-
-    public void testWriteFestivalInfo() throws Exception {
-        //TODO: implement
-    }
-
-    public void testUpdateFestivalInfo() throws Exception {
-        //TODO: implement
-    }
-
-    public void testReadConcertInfo() throws Exception {
-        //TODO: implement
-    }
-
-    public void testWriteConcertInfo() throws Exception {
-        //TODO: implement
-    }
-
-    public void testUpdateConcertInfo() throws Exception {
-        //TODO: implement
-    }
-
-    public void testDeleteFestival() throws Exception {
-        //TODO: implement
-    }
-
-    public void testDeleteConcert() throws Exception {
-        //TODO: implement
-    }
-
-    public void testVote() throws Exception {
-        //TODO: implement
     }
 }

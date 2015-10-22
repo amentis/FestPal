@@ -16,9 +16,9 @@
 
 package com.ivanbratoev.festpal.datamodel.db.internal;
 
-import junit.framework.TestCase;
+import android.test.AndroidTestCase;
 
-public class InternalDatabaseHandlerTest extends TestCase {
+public class InternalDatabaseHandlerTest extends AndroidTestCase {
 
     public void setUp() throws Exception {
         super.setUp();
@@ -27,45 +27,5 @@ public class InternalDatabaseHandlerTest extends TestCase {
 
     public void tearDown() throws Exception {
 
-    }
-
-    public void testHasFestivals() throws Exception {
-        //TODO:implement
-    }
-
-    public void testFestivalHasConcerts() throws Exception {
-        //TODO:implement
-    }
-
-    public void testGetFestivals() throws Exception {
-        //TODO:implement
-    }
-
-    public void testAddFestival() throws Exception {
-        //TODO:implement
-    }
-
-    public void testEditFestival() throws Exception {
-        //TODO:implement
-    }
-
-    public void testRemoveFestival() throws Exception {
-        //TODO:implement
-    }
-
-    public void testGetConcerts() throws Exception {
-        //TODO:implement
-    }
-
-    public void testAddConcert() throws Exception {
-        //TODO:implement
-    }
-
-    public void testEditConcert() throws Exception {
-        //TODO:implement
-    }
-
-    public void testRemoveConcert() throws Exception {
-        //TODO:implement
     }
 }

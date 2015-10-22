@@ -52,6 +52,8 @@ class ExternalDatabaseDefinitions {
     public static final String RESPONSE_ARTIST_EXISTS = "Artist exists\n";
     public static final String RESPONSE_PERMISSION_NOT_GRANTED = "Permission not granted\n";
     public static final String RESPONSE_OK = "OK\n";
+    public static final String PARAMETER_MIN_PRICE = "min_price";
+    public static final String PARAMETER_MAX_PRICE = "max_price";
 
     public class LogInContext {
         public static final String PARAMETER_USERNAME = "username";
@@ -81,6 +83,8 @@ class ExternalDatabaseDefinitions {
     }
 
     public class ConcertContext {
+        public static final String RESULT_PARAMETER_EXTERNAL_ID = "external_id";
+        public static final String PARAMETER_ID = "id";
         public static final String PARAMETER_FESTIVAL = "festival";
         public static final String PARAMETER_ARTIST = "artist";
         public static final String PARAMETER_OLD_ARTIST = "old_artist";

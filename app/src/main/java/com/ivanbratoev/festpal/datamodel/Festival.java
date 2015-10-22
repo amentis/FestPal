@@ -20,14 +20,12 @@ package com.ivanbratoev.festpal.datamodel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.util.Date;
-
 /**
  * Holder class for festival info
  */
 public class Festival {
-    private Integer id;
-    private int externalId;
+    private Long id;
+    private long externalId;
     private String name;
     private String description;
     private String country;
@@ -38,8 +36,6 @@ public class Festival {
     private String owner;
     private boolean official;
     private int votes;
-    private Date lastModified;
-    private Date lastSynchronised;
 
     /**
      * @param id          id in internal DB. If object is not saved in the internal db set to null
@@ -55,7 +51,7 @@ public class Festival {
      * @param official    true if the festival owner is official host of the festival
      * @param votes       number of people voted for festival
      */
-    public Festival(@Nullable Integer id, int externalId, @NonNull String name,
+    public Festival(@Nullable Long id, long externalId, @NonNull String name,
                     @NonNull String description, @NonNull String country, @NonNull String city,
                     @NonNull String address, @NonNull String genre, @NonNull String prices,
                     @NonNull String owner, boolean official, int votes) {
@@ -71,56 +67,18 @@ public class Festival {
         this.owner = owner;
         this.official = official;
         this.votes = votes;
-        this.lastModified = new Date();
-        this.lastSynchronised = new Date();
     }
 
-    /**
-     * @param id               id in internal DB. If object is not saved in the internal db set to null
-     * @param externalId       id in external DB
-     * @param name             festival name
-     * @param description      festival description
-     * @param country          festival country
-     * @param city             festival city
-     * @param address          festival address
-     * @param genre            genre or list of genres
-     * @param prices           price or list of prices with supplied currency
-     * @param owner            festival owner(uploader) name
-     * @param official         true if the festival owner is official host of the festival
-     * @param votes            number of people voted for festival
-     * @param lastModified     date/time the object was last modified internally
-     * @param lastSynchronised date/time the object was last synchronised with dbs
-     */
-    public Festival(Integer id, int externalId, String name, String description,
-                    String country, String city, String address,
-                    String genre, String prices, String owner, boolean official, int votes,
-                    Date lastModified, Date lastSynchronised) {
-        this(id, externalId, name, description, country, city, address,
-                genre, prices, owner, official, votes);
-        this.lastModified = lastModified;
-        this.lastSynchronised = lastSynchronised;
-    }
-
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        if (id.equals(this.id)) {
-            this.id = id;
-            setModified();
-        }
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public int getExternalId() {
+    public long getExternalId() {
         return externalId;
-    }
-
-    public void setExternalId(int externalId){
-        if (externalId != this.externalId){
-            this.externalId = externalId;
-            setModified();
-        }
     }
 
     public String getName() {
@@ -128,10 +86,7 @@ public class Festival {
     }
 
     public void setName(String name) {
-        if (!name.equals(this.name)){
-            this.name = name;
-            setModified();
-        }
+        this.name = name;
     }
 
     public String getDescription() {
@@ -139,10 +94,7 @@ public class Festival {
     }
 
     public void setDescription(String description) {
-        if (!description.equals(this.description)){
-            this.description = description;
-            setModified();
-        }
+        this.description = description;
     }
 
     public String getCountry() {
@@ -150,10 +102,7 @@ public class Festival {
     }
 
     public void setCountry(String country) {
-        if (!country.equals(this.country)){
-            this.country = country;
-            setModified();
-        }
+        this.country = country;
     }
 
     public String getCity() {
@@ -161,10 +110,7 @@ public class Festival {
     }
 
     public void setCity(String city) {
-        if (!city.equals(this.city)){
-            this.city = city;
-            setModified();
-        }
+        this.city = city;
     }
 
     public String getAddress() {
@@ -172,10 +118,7 @@ public class Festival {
     }
 
     public void setAddress(String address) {
-        if (!address.equals(this.address)){
-            this.address = address;
-            setModified();
-        }
+        this.address = address;
     }
 
     public String getGenre() {
@@ -183,10 +126,7 @@ public class Festival {
     }
 
     public void setGenre(String genre) {
-        if (!genre.equals(this.genre)){
-            this.genre = genre;
-            setModified();
-        }
+        this.genre = genre;
     }
 
     public String getPrices() {
@@ -194,10 +134,7 @@ public class Festival {
     }
 
     public void setPrices(String prices) {
-        if (!prices.equals(this.prices)) {
-            this.prices = prices;
-            setModified();
-        }
+        this.prices = prices;
     }
 
     public String getOwner() {
@@ -205,10 +142,7 @@ public class Festival {
     }
 
     public void setOwner(String owner) {
-        if (!owner.equals(this.owner)){
-            this.owner = owner;
-            setModified();
-        }
+        this.owner = owner;
     }
 
     public boolean isOfficial() {
@@ -216,10 +150,7 @@ public class Festival {
     }
 
     public void setOfficial(boolean official) {
-        if (official != this.official) {
-            this.official = official;
-            setModified();
-        }
+        this.official = official;
     }
 
     public int getVotes() {
@@ -227,60 +158,41 @@ public class Festival {
     }
 
     public void setVotes(int votes) {
-        if (votes != this.votes) {
-            this.votes = votes;
-            setModified();
-        }
+        this.votes = votes;
     }
 
-    /**
-     * Sets current time to date modified.
-     */
-    private void setModified() {
-        lastModified = new Date();
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Festival festival = (Festival) o;
+
+        if (externalId != festival.externalId) return false;
+        if (official != festival.official) return false;
+        if (!name.equals(festival.name)) return false;
+        if (!description.equals(festival.description)) return false;
+        if (!country.equals(festival.country)) return false;
+        if (!city.equals(festival.city)) return false;
+        if (!address.equals(festival.address)) return false;
+        if (!genre.equals(festival.genre)) return false;
+        if (!prices.equals(festival.prices)) return false;
+        return owner.equals(festival.owner);
+
     }
 
-    public Date getLastModified() {
-        return lastModified;
-    }
-
-    public Date getLastSynchronised() {
-        return lastSynchronised;
-    }
-
-    /**
-     * sets internal data to the supplied one and sets last synchronisation time accordingly
-     *
-     * @param festival the data to write
-     */
-    public void writeToSynchronise(Festival festival) {
-        this.name = festival.name;
-        this.description = festival.description;
-        this.country = festival.country;
-        this.city = festival.city;
-        this.address = festival.address;
-        this.genre = festival.genre;
-        this.prices = festival.prices;
-        this.owner = festival.owner;
-        this.official = festival.official;
-        this.votes = festival.votes;
-        lastSynchronised = new Date();
-    }
-
-    /**
-     * returns unsaved festival data and sets last synchronisation time accordingly
-     *
-     * @return reference to the object if the festival is uploaded by the logged user and there are
-     * modifications done more recently than the object has been last synchronised, null otherwise
-     */
-    public Festival readToSynchronise(String username) {
-        Date lastSynchronisedBefore = lastSynchronised;
-        lastSynchronised = new Date();
-        if (!this.owner.equals(username))
-            return null;
-        if (lastModified.before(lastSynchronisedBefore)){
-            return null;
-        }
-        return this;
+    @Override
+    public int hashCode() {
+        int result = (int) externalId;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + description.hashCode();
+        result = 31 * result + country.hashCode();
+        result = 31 * result + city.hashCode();
+        result = 31 * result + address.hashCode();
+        result = 31 * result + genre.hashCode();
+        result = 31 * result + prices.hashCode();
+        result = 31 * result + owner.hashCode();
+        result = 31 * result + (official ? 1 : 0);
+        return result;
     }
 }

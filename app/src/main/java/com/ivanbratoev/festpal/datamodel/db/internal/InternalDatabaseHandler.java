@@ -21,6 +21,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.Nullable;
 
 import com.ivanbratoev.festpal.datamodel.Concert;
 import com.ivanbratoev.festpal.datamodel.Festival;
@@ -98,7 +99,7 @@ public class InternalDatabaseHandler {
 
         while (!cursor.isAfterLast()){
             result[i] = new Festival(
-            cursor.getInt(cursor.getColumnIndex(InternalDBContract.FestivalEntry._ID)),
+                    cursor.getLong(cursor.getColumnIndex(InternalDBContract.FestivalEntry._ID)),
                     cursor.getInt(cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_EXTERNAL_ID)),
                     cursor.getString(
                             cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_NAME)),
@@ -115,20 +116,11 @@ public class InternalDatabaseHandler {
                     cursor.getString(
                             cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_PRICES)),
                     cursor.getString(
-                            cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_UPLOADER)),
+                            cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_OWNER)),
                     (1 == cursor.getInt(
                             cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_OFFICIAL))),
                     cursor.getInt(
-                            cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_VOTES)),
-                    new Date(
-                            cursor.getInt(
-                                    cursor.getColumnIndex(
-                                            InternalDBContract.FestivalEntry.COLUMN_NAME_LAST_MODIFIED))),
-                    new Date(
-                            cursor.getInt(
-                                    cursor.getColumnIndex(
-                                            InternalDBContract.FestivalEntry.COLUMN_NAME_LAST_SYNCHRONISED)
-                            ))
+                            cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_VOTES))
             );
             i++;
             cursor.moveToNext();
@@ -140,9 +132,51 @@ public class InternalDatabaseHandler {
     }
 
     /**
+     *
+     * @param id of the festival
+     * @return Festival object found
+     */
+    public Festival getFestival(long id) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        Cursor cursor = db.query(InternalDBContract.FestivalEntry.TABLE_NAME,
+                null, "?=?",
+                new String[]{InternalDBContract.FestivalEntry._ID, String.valueOf(id)},
+                null, null, null);
+
+        cursor.moveToFirst();
+        Festival festival = new Festival(
+                cursor.getLong(cursor.getColumnIndex(InternalDBContract.FestivalEntry._ID)),
+                cursor.getLong(cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_EXTERNAL_ID)),
+                cursor.getString(
+                        cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_NAME)),
+                cursor.getString(
+                        cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_DESCRIPTION)),
+                cursor.getString(
+                        cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_COUNTRY)),
+                cursor.getString(
+                        cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_CITY)),
+                cursor.getString(
+                        cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_ADDRESS)),
+                cursor.getString(
+                        cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_GENRE)),
+                cursor.getString(
+                        cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_PRICES)),
+                cursor.getString(
+                        cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_OWNER)),
+                (1 == cursor.getInt(
+                        cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_OFFICIAL))),
+                cursor.getInt(
+                        cursor.getColumnIndex(InternalDBContract.FestivalEntry.COLUMN_NAME_VOTES))
+        );
+        cursor.close();
+        return festival;
+    }
+
+    /**
      * Add a festival to the internal DB
      * @param festival the festival information to insert
-     * @return the result from the database insert operation
+     * @return internal ID of the added object or -1 on fail
      */
     public long addFestival(Festival festival){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -156,13 +190,9 @@ public class InternalDatabaseHandler {
         values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_ADDRESS, festival.getAddress());
         values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_GENRE, festival.getGenre());
         values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_PRICES, festival.getPrices());
-        values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_UPLOADER, festival.getOwner());
+        values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_OWNER, festival.getOwner());
         values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_OFFICIAL, festival.isOfficial());
         values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_VOTES, festival.getVotes());
-        values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_LAST_MODIFIED,
-                festival.getLastModified().getTime());
-        values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_LAST_SYNCHRONISED,
-                festival.getLastSynchronised().getTime());
 
         return db.insert(InternalDBContract.FestivalEntry.TABLE_NAME, null, values);
     }
@@ -177,18 +207,15 @@ public class InternalDatabaseHandler {
      * @param address new address to set or <code>null</code> to keep the field unmodified
      * @param genre new genre to set or <code>null</code> to keep the field unmodified
      * @param prices new prices to set or <code>null</code> to keep the field unmodified
-     * @param uploader new uploader to set or <code>null</code> to keep the field unmodified
+     * @param owner new uploader to set or <code>null</code> to keep the field unmodified
      * @param official new official to set or <code>null</code> to keep the field unmodified
      * @param votes new votes count to set or <code>null</code> to keep the field unmodified
-     * @param lastModified new lastModified value to set or <code>null</code> to keep the field
-     *        unmodified
-     * @param lastSynchronised new lastSynchronised value to set or <code>null</code> to keep the
-     *        field unmodified
      */
-    public void editFestival(int id, String name, String description, String country,
-                             String city, String address, String genre, String prices,
-                             String uploader, Boolean official, Integer votes,
-                             Date lastModified, Date lastSynchronised) {
+    public void editFestival(long id, @Nullable String name, @Nullable String description,
+                             @Nullable String country, @Nullable String city,
+                             @Nullable String address, @Nullable String genre,
+                             @Nullable String prices, @Nullable String owner,
+                             @Nullable Boolean official, @Nullable Integer votes) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -207,18 +234,12 @@ public class InternalDatabaseHandler {
             values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_GENRE, genre);
         if (prices != null)
             values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_PRICES, prices);
-        if (uploader != null)
-            values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_UPLOADER, uploader);
+        if (owner != null)
+            values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_OWNER, owner);
         if (official != null)
             values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_OFFICIAL, official);
         if (votes != null)
             values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_VOTES, votes);
-        if (lastModified != null)
-            values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_LAST_MODIFIED,
-                    lastModified.getTime());
-        if (lastSynchronised != null)
-            values.put(InternalDBContract.FestivalEntry.COLUMN_NAME_LAST_SYNCHRONISED,
-                    lastSynchronised.getTime());
 
         db.update(InternalDBContract.FestivalEntry.TABLE_NAME,
                 values,
@@ -230,7 +251,7 @@ public class InternalDatabaseHandler {
      * remove festival
      * @param id id of the festival to remove
      */
-    public void removeFestival(int id){
+    public void removeFestival(long id) {
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -261,6 +282,10 @@ public class InternalDatabaseHandler {
 
         while (!cursor.isAfterLast()){
             result[i] = new Concert(
+                    cursor.getLong(cursor.getColumnIndex(
+                            InternalDBContract.ConcertEntry._ID)),
+                    cursor.getLong(cursor.getColumnIndex(
+                            InternalDBContract.ConcertEntry.COLUMN_NAME_EXTERNAL_ID)),
                     festival,
                     cursor.getString(cursor.getColumnIndex(
                             InternalDBContract.ConcertEntry.COLUMN_NAME_ARTIST)),
@@ -285,6 +310,47 @@ public class InternalDatabaseHandler {
     }
 
     /**
+     *
+     * @param festival festival hosting the concert
+     * @param id id of the concert
+     * @return the concert object found
+     */
+    public Concert getConcert(Festival festival, long id) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        Cursor cursor = db.query(InternalDBContract.FestivalEntry.TABLE_NAME,
+                null, "?=? AND ?=?",
+                new String[]{InternalDBContract.ConcertEntry.COLUMN_NAME_FESTIVAL,
+                        String.valueOf(festival.getId()),
+                        InternalDBContract.ConcertEntry._ID,
+                        String.valueOf(id)},
+                null, null, null);
+
+        cursor.moveToFirst();
+        Concert concert = new Concert(
+                cursor.getLong(cursor.getColumnIndex(
+                        InternalDBContract.ConcertEntry._ID)),
+                cursor.getLong(cursor.getColumnIndex(
+                        InternalDBContract.ConcertEntry.COLUMN_NAME_EXTERNAL_ID)),
+                festival,
+                cursor.getString(cursor.getColumnIndex(
+                        InternalDBContract.ConcertEntry.COLUMN_NAME_ARTIST)),
+                cursor.getInt(cursor.getColumnIndex(
+                        InternalDBContract.ConcertEntry.COLUMN_NAME_STAGE)),
+                cursor.getInt(cursor.getColumnIndex(
+                        InternalDBContract.ConcertEntry.COLUMN_NAME_DAY)),
+                new Date(cursor.getInt(cursor.getColumnIndex(
+                        InternalDBContract.ConcertEntry.COLUMN_NAME_START))),
+                new Date(cursor.getInt(cursor.getColumnIndex(
+                        InternalDBContract.ConcertEntry.COLUMN_NAME_END))),
+                (1 == cursor.getInt(cursor.getColumnIndex(
+                        InternalDBContract.ConcertEntry.COLUMN_NAME_NOTIFY)))
+        );
+        cursor.close();
+        return concert;
+    }
+
+    /**
      * add concert to the internal DB
      * @param concert concert info to insert
      * @return result from DB insert
@@ -306,45 +372,38 @@ public class InternalDatabaseHandler {
         values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_END,
                 concert.getEnd().getTime());
         values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_NOTIFY,
-                concert.willNotify());
-        values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_LAST_MODIFIED,
-                concert.getLastModified().getTime());
-        values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_LAST_SYNCHRONISED,
-                concert.getLastSynchronised().getTime());
+                concert.isToNotify());
 
         return db.insert(InternalDBContract.ConcertEntry.TABLE_NAME, null, values);
     }
 
     /**
      * Alter the information of a concert entry
-     * @param festivalOld current festival id, used for identifying the concert
-     * @param artistOld current artist name, used for identifying the concert
+     * @param concertId id of the concert
+     * @param externalID external id of the concert
      * @param festival new festival id to set or <code>null</code> to leave unmodified
      * @param artist new artist name to set or <code>null</code> to leave unmodified
-     * @param scene new scene number to set or <code>null</code> to leave unmodified
+     * @param stage new stage number to set or <code>null</code> to leave unmodified
      * @param day new day number to set or <code>null</code> to leave unmodified
      * @param start new starting datetime to set or <code>null</code> to leave unmodified
      * @param end new ending datetime to set or <code>null</code> to leave unmodified
      * @param notify new notify value to set or <code>null</code> to leave unmodified
-     * @param lastModified new lastModified value to set or <code>null</code> to keep the field
-     *        unmodified
-     * @param lastSynchronised new lastSynchronised value to set or <code>null</code> to keep the
-     *        field unmodified
      */
-    public void editConcert(int festivalOld, String artistOld, Integer festival,
-                            String artist, Integer scene,
-                            Integer day, Date start, Date end, Boolean notify,
-                            Date lastModified, Date lastSynchronised) {
+    public void editConcert(long concertId, Long externalID, Long festival,
+                            String artist, Integer stage,
+                            Integer day, Date start, Date end, Boolean notify) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
 
+        if (externalID != null)
+            values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_EXTERNAL_ID, externalID);
         if (festival != null)
             values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_FESTIVAL, festival);
         if (artist != null)
             values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_ARTIST, artist);
-        if (scene != null)
-            values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_STAGE, scene);
+        if (stage != null)
+            values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_STAGE, stage);
         if (day != null)
             values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_DAY, day);
         if (start != null)
@@ -353,18 +412,11 @@ public class InternalDatabaseHandler {
             values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_END, end.getTime());
         if (notify != null)
             values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_NOTIFY, notify);
-        if (lastModified != null)
-            values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_LAST_MODIFIED,
-                    lastModified.getTime());
-        if (lastSynchronised != null)
-            values.put(InternalDBContract.ConcertEntry.COLUMN_NAME_LAST_SYNCHRONISED,
-                    lastSynchronised.getTime());
 
         db.update(InternalDBContract.ConcertEntry.TABLE_NAME,
                 values,
-                InternalDBContract.ConcertEntry.COLUMN_NAME_FESTIVAL + " LIKE ? AND " +
-                        InternalDBContract.ConcertEntry.COLUMN_NAME_ARTIST + " LIKE ?",
-                new String[]{String.valueOf(festivalOld), artistOld});
+                "?=?",
+                new String[]{InternalDBContract.ConcertEntry._ID, String.valueOf(concertId)});
 
     }
 
