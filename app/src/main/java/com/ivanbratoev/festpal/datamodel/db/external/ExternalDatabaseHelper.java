@@ -26,6 +26,10 @@ class ExternalDatabaseHelper {
                 ":" + ExternalDatabaseDefinitions.HOST + "/";
     }
 
+    public static String getRegister() {
+        return getAddress() + ExternalDatabaseDefinitions.REGISTER + "/";
+    }
+
     public static String getLogin() {
         return getAddress() + ExternalDatabaseDefinitions.LOGIN + "/";
     }

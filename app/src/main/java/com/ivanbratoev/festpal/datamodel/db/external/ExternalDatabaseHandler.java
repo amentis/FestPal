@@ -17,6 +17,7 @@
 package com.ivanbratoev.festpal.datamodel.db.external;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.ivanbratoev.festpal.datamodel.Concert;
 import com.ivanbratoev.festpal.datamodel.Festival;
@@ -71,6 +72,77 @@ public class ExternalDatabaseHandler {
         } catch (Exception ignore) {
         }
         return false;
+    }
+
+    /**
+     * @param representative whether the new user is an official representative of a festival's
+     *                       organisers
+     * @return 0 on success, 1 on missing non-optional fields, 2 on invalid non-optional fields,
+     * 3 on invalid optional fields, 4 on network or other error
+     * @throws ClientDoesNotHavePermissionException
+     */
+    public int register(@NonNull String username, @NonNull String email, @NonNull String password,
+                        @Nullable String firstName, @Nullable String lastName,
+                        @Nullable String country, @Nullable String city,
+                        @Nullable Boolean representative) throws ClientDoesNotHavePermissionException {
+        try {
+            URL url = new URL(ExternalDatabaseDefinitions.REGISTER);
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put(ExternalDatabaseDefinitions.RegisterContext.PARAMETER_USERNAME,
+                    username);
+            parameters.put(ExternalDatabaseDefinitions.RegisterContext.PARAMETER_EMAIL,
+                    email);
+            parameters.put(ExternalDatabaseDefinitions.RegisterContext.PARAMETER_PASSWORD,
+                    password);
+            if (firstName != null) {
+                parameters.put(ExternalDatabaseDefinitions.RegisterContext.PARAMETER_FIRST_NAME,
+                        firstName);
+            }
+            if (lastName != null) {
+                parameters.put(ExternalDatabaseDefinitions.RegisterContext.PARAMETER_LAST_NAME,
+                        lastName);
+            }
+            if (country != null) {
+                parameters.put(ExternalDatabaseDefinitions.RegisterContext.PARAMETER_COUNTRY,
+                        country);
+            }
+            if (city != null) {
+                parameters.put(ExternalDatabaseDefinitions.RegisterContext.PARAMETER_CITY,
+                        city);
+            }
+            if (representative != null) {
+                if (representative)
+                    parameters.put(ExternalDatabaseDefinitions.RegisterContext.PARAMETER_REPRESENTATIVE,
+                            "1");
+            }
+            String response = getRemoteData(url, parameters);
+            if (response == null)
+                return 4;
+            switch (response) {
+                case ExternalDatabaseDefinitions.RegisterContext.RESULT_MISSING_NON_OPTIONAL_FIELDS:
+                    return 1;
+                case ExternalDatabaseDefinitions.RegisterContext.RESULT_INVALID_USERNAME:
+                    return 2;
+                case ExternalDatabaseDefinitions.RegisterContext.RESULT_INVALID_EMAIL:
+                    return 2;
+                case ExternalDatabaseDefinitions.RegisterContext.RESULT_INVALID_PASSWORD:
+                    return 2;
+                case ExternalDatabaseDefinitions.RegisterContext.RESULT_INVALID_FIRST_NAME:
+                    return 3;
+                case ExternalDatabaseDefinitions.RegisterContext.RESULT_INVALID_LAST_NAME:
+                    return 3;
+                case ExternalDatabaseDefinitions.RegisterContext.RESULT_INVALID_COUNTRY:
+                    return 3;
+                case ExternalDatabaseDefinitions.RegisterContext.RESULT_INVALID_CITY:
+                    return 3;
+                case ExternalDatabaseDefinitions.RegisterContext.RESULT_OK:
+                    return 0;
+                default:
+                    return 4;
+            }
+        } catch (MalformedURLException ignore) {
+            return 4;
+        }
     }
 
     /**
@@ -460,8 +532,6 @@ public class ExternalDatabaseHandler {
         try {
             URL url = new URL(ExternalDatabaseHelper.getReadConcertInfo());
             Map<String, String> parameters = new HashMap<>();
-            parameters.put(ExternalDatabaseDefinitions.PARAMETER_FESTIVAL,
-                    String.valueOf(festival.getExternalId()));
             parameters.put(ExternalDatabaseDefinitions.ConcertContext.PARAMETER_ID,
                     String.valueOf(id));
             String response = getRemoteData(url, parameters);

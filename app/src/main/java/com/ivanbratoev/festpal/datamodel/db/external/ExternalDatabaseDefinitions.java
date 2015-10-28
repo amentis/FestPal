@@ -24,6 +24,7 @@ class ExternalDatabaseDefinitions {
     public static final String ADDRESS = "127.0.0.1";
     public static final String HOST = "8000";
 
+    public static final String REGISTER = "register";
     public static final String LOGIN = "login";
     public static final String LOGOUT = "logout";
 
@@ -55,6 +56,26 @@ class ExternalDatabaseDefinitions {
     public static final String PARAMETER_MIN_PRICE = "min_price";
     public static final String PARAMETER_MAX_PRICE = "max_price";
 
+    public class RegisterContext {
+        public static final String PARAMETER_USERNAME = "username";
+        public static final String PARAMETER_EMAIL = "e-mail";
+        public static final String PARAMETER_PASSWORD = "password";
+        public static final String PARAMETER_FIRST_NAME = "first_name";
+        public static final String PARAMETER_LAST_NAME = "last_name";
+        public static final String PARAMETER_COUNTRY = "country";
+        public static final String PARAMETER_CITY = "city";
+        public static final String PARAMETER_REPRESENTATIVE = "representative";
+        public static final String RESULT_MISSING_NON_OPTIONAL_FIELDS = "Missing Non-Optional Fields\n";
+        public static final String RESULT_INVALID_USERNAME = "Invalid Username\n";
+        public static final String RESULT_INVALID_EMAIL = "Invalid e-mail\n";
+        public static final String RESULT_INVALID_PASSWORD = "Invalid Password\n";
+        public static final String RESULT_INVALID_FIRST_NAME = "Invalid First Name\n";
+        public static final String RESULT_INVALID_LAST_NAME = "Invalid Last Name\n";
+        public static final String RESULT_INVALID_COUNTRY = "Invalid Country\n";
+        public static final String RESULT_INVALID_CITY = "Invalid City\n";
+        public static final String RESULT_OK = "OK\n";
+    }
+
     public class LogInContext {
         public static final String PARAMETER_USERNAME = "username";
         public static final String PARAMETER_PASSWORD = "password";
@@ -76,10 +97,7 @@ class ExternalDatabaseDefinitions {
         public static final String RESULT_PARAMETER_PRICES = "prices";
         public static final String RESULT_PARAMETER_OWNER = "owner";
         public static final String RESULT_PARAMETER_OFFICIAL = "official";
-        public static final String RESULT_PARAMETER_DOWNLOADS = "downloads";
         public static final String RESULT_PARAMETER_VOTES = "votes";
-        public static final String RESULT_PARAMETER_FIRST_UPLOADED = "first_uploaded";
-        public static final String RESULT_PARAMETER_LAST_MODIFIED = "last_modified";
     }
 
     public class ConcertContext {
@@ -87,12 +105,10 @@ class ExternalDatabaseDefinitions {
         public static final String PARAMETER_ID = "id";
         public static final String PARAMETER_FESTIVAL = "festival";
         public static final String PARAMETER_ARTIST = "artist";
-        public static final String PARAMETER_OLD_ARTIST = "old_artist";
         public static final String PARAMETER_SCENE = "scene";
         public static final String PARAMETER_DAY = "day";
         public static final String PARAMETER_START = "start";
         public static final String PARAMETER_END = "end";
-        public static final String RESULT_PARAMETER_FESTIVAL = "festival";
         public static final String RESULT_PARAMETER_ARTIST = "artist";
         public static final String RESULT_PARAMETER_SCENE = "scene";
         public static final String RESULT_PARAMETER_DAY = "day";

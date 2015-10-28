@@ -21,6 +21,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.ivanbratoev.festpal.datamodel.db.external.ClientDoesNotHavePermissionException;
 import com.ivanbratoev.festpal.datamodel.db.external.ExternalDatabaseHandler;
@@ -78,6 +79,21 @@ public final class DataModel {
      */
     void setUsername(String username) {
         this.username = username;
+    }
+
+    /**
+     * @param representative whether the new user is an official representative of a festival's
+     *                       organisers
+     * @return 0 on success, 1 on missing non-optional fields, 2 on invalid non-optional fields,
+     * 3 on invalid optional fields, 4 on network or other error
+     * @throws ClientDoesNotHavePermissionException
+     */
+    public int register(@NonNull String username, @NonNull String email, @NonNull String password,
+                        @Nullable String firstName, @Nullable String lastName,
+                        @Nullable String country, @Nullable String city,
+                        @Nullable Boolean representative) throws ClientDoesNotHavePermissionException {
+        return externalDatabaseHandler.register(username, email, password, firstName, lastName,
+                country, city, representative);
     }
 
     /**

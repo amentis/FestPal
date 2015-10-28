@@ -39,7 +39,7 @@ public class InternalDBContract {
     public static final String CREATE_TABLE_FESTIVAL_QUERY =
             "CREATE TABLE " + FestivalEntry.TABLE_NAME + " ("
             + FestivalEntry._ID + " INTEGER PRIMARY KEY, "
-                    + FestivalEntry.COLUMN_NAME_EXTERNAL_ID + " INTEGER PRIMARY KEY, "
+                    + FestivalEntry.COLUMN_NAME_EXTERNAL_ID + " INTEGER, "
             + FestivalEntry.COLUMN_NAME_NAME + " TEXT, "
             + FestivalEntry.COLUMN_NAME_DESCRIPTION + " TEXT, "
             + FestivalEntry.COLUMN_NAME_COUNTRY + " TEXT, "
@@ -49,7 +49,7 @@ public class InternalDBContract {
             + FestivalEntry.COLUMN_NAME_PRICES + " TEXT, "
                     + FestivalEntry.COLUMN_NAME_OWNER + " TEXT, "
             + FestivalEntry.COLUMN_NAME_OFFICIAL + " INTEGER, "
-                    + FestivalEntry.COLUMN_NAME_VOTES + " VOTES, "
+                    + FestivalEntry.COLUMN_NAME_VOTES + " VOTES "
             + ")";
 
     public InternalDBContract() {
